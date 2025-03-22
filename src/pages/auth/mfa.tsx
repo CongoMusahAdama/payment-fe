@@ -2,10 +2,11 @@ import type React from "react";
 
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeftIcon, LoaderCircleIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import authService from "@/services/authService";
 
 export default function MfaVerification() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -13,6 +14,12 @@ export default function MfaVerification() {
   const [error, setError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email;
+  console.log(email);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -85,7 +92,7 @@ export default function MfaVerification() {
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const otpString = otp.join("");
 
     if (otpString.length !== 6) {
@@ -96,32 +103,38 @@ export default function MfaVerification() {
     setIsVerifying(true);
     setError(null);
 
-    // Simulate verification process
-    setTimeout(() => {
-      // For demo purposes, let's say "123456" is the correct OTP
-      if (otpString === "123456") {
-        // Redirect or show success
-        window.location.href = "/verification-success";
-      } else {
-        setError("Invalid verification code. Please try again.");
-        setIsVerifying(false);
-      }
-    }, 1500);
+    try {
+      await authService.mfaVerify(email, otpString);
+      // Successfully verified
+      navigate("/"); // Redirect to login page
+    } catch (err) {
+      // Handle the error
+      setError("Verification failed. Please try again.");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
-  const handleResend = () => {
-    // Reset OTP fields
-    setOtp(Array(6).fill(""));
-    // Reset timer
-    setTimeLeft(30);
-    setCanResend(false);
-    // Clear any errors
-    setError(null);
-    // Focus first input
-    inputRefs.current[0]?.focus();
+  const handleResend = async () => {
+    setIsResending(true);
+    try {
+      // Reset OTP fields
+      setOtp(Array(6).fill(""));
+      // Reset timer
+      setTimeLeft(30);
+      setCanResend(false);
+      // Clear any errors
+      setError(null);
+      // Focus first input
+      inputRefs.current[0]?.focus();
 
-    // Here you would typically call your API to resend the OTP
-    console.log("Resending OTP...");
+      // Here you would typically call your API to resend the OTP
+      await authService.mfaSetup("gojek30315@birige.com");
+    } catch (err) {
+      setError("Failed to resend verification code. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -137,7 +150,7 @@ export default function MfaVerification() {
 
           <p className="text-gray-500 mb-8">
             We've sent a 6-digit verification code to your email
-            <span className="font-medium "> j***@example.com</span>
+            <span className="font-medium "> {email}</span>
           </p>
 
           <div className="flex justify-between mb-8">
@@ -179,21 +192,26 @@ export default function MfaVerification() {
             )}
           </Button>
 
-          <div className="text-center">
-            <p className="text-gray-500 text-sm mb-2">Didn't receive the code?</p>
-            {canResend ? (
-              <Button
-                variant="link"
-                onClick={handleResend}
-                className="text-indigo-500 hover:text-indigo-300 font-medium cursor-pointer"
-              >
-                Resend Code
-              </Button>
-            ) : (
-              <p className="text-gray-500 text-sm">
-                Resend code in <span className="font-medium text-gray-400">{timeLeft}s</span>
-              </p>
-            )}
+          <div>
+            <div className="text-center">
+              <p className="text-gray-500 text-sm mb-2">Didn't receive the code?</p>
+              {canResend ? (
+                <Button
+                  variant="link"
+                  onClick={handleResend}
+                  className="text-indigo-500 hover:text-indigo-300 font-medium cursor-pointer"
+                >
+                  Resend Code
+                </Button>
+              ) : (
+                <p className="text-gray-500 text-sm">
+                  Resend code in <span className="font-medium text-gray-400">{timeLeft}s</span>
+                </p>
+              )}
+            </div>
+            <Button className="cursor-pointer flex mx-auto px-10 mt-2" onClick={() => navigate("/")} size={"lg"}>
+              Skip
+            </Button>
           </div>
         </div>
       </div>

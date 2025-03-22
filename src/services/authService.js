@@ -1,4 +1,4 @@
-import { URL } from "@/utils/constant";
+import { getAccessToken, URL } from "@/utils/constant";
 import axios from "axios";
 
 // const API_URL = 'http://localhost:5000/api/auth/';
@@ -15,7 +15,17 @@ const login = async (userData) => {
 };
 
 const logout = async () => {
-  await axios.post(`${API_URL}logout`);
+  const token = getAccessToken();
+  console.log(token);
+  await axios.post(
+    `${API_URL}logout`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 const refreshToken = async (token) => {

@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { ProfileTypes } from "@/utils/types/profile";
+import { ProfileTypes, TokenResponse } from "@/utils/types/profile";
 import { LoaderCircle } from "lucide-react";
 import authService from "@/services/authService";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { saveAuthTokens } from "@/utils/constant";
 
 type LoginProps = {
   setAuthType: Dispatch<SetStateAction<"login" | "register">>;
@@ -32,11 +34,14 @@ export function LoginForm({ className, setAuthType, ...props }: React.ComponentP
     formState: { isSubmitting, errors },
     register,
   } = useForm<FormValues>();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await authService.login(data);
+      const res = (await authService.login(data)) as TokenResponse;
       console.log(res);
+      saveAuthTokens(res);
+      navigate("/dashboard");
 
       toast("Login successful");
     } catch (error) {

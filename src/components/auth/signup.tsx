@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { LoaderCircle } from "lucide-react";
 import authService from "@/services/authService";
 import { toast } from "sonner";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type RegisterProps = {
   setAuthType: Dispatch<SetStateAction<"login" | "register">>;
@@ -30,8 +30,9 @@ const Signup = ({ className, setAuthType, ...props }: React.ComponentPropsWithou
   const onSubmit = async (data: FormValues) => {
     try {
       const res = await authService.register(data);
+      await authService.mfaSetup(data.email);
       console.log(res);
-      navigate("/verify");
+      navigate("/verify", { state: { email: data.email } });
       toast("Account created successfully");
     } catch (error) {
       toast("An error occurred. Please try again.");
