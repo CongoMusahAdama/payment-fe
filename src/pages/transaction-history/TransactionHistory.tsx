@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import transactionService from "../../services/transactionService";
-import { TransactionHistoryTypes } from "../../types/transaction";
+import { TransactionHistoryTypes } from "../../utils/types/transaction";
 
 const TransactionHistory = () => {
   const [transactions, setTransactions] = useState<TransactionHistoryTypes[]>([]);
@@ -11,7 +11,7 @@ const TransactionHistory = () => {
       try {
         const data = await transactionService.getTransactionHistory();
         setTransactions(data.transactions);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };
@@ -21,7 +21,7 @@ const TransactionHistory = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Transaction History</h1>
+      <h1 className="text-4xl font-bold mb-4">Transaction History</h1>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="bg-white p-6 rounded shadow-md w-80">
         {transactions.length === 0 && <p className="text-gray-500">No transactions available.</p>}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import transactionService from "../../services/transactionService";
 
 const PAYSTACK_PUBLIC_KEY = "pk_test_54d0afa0a28d96055f4f4b26e05d11e4877f14e5";
@@ -9,7 +9,7 @@ const Transfer = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleTransfer = async (e) => {
+  const handleTransfer = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -21,7 +21,7 @@ const Transfer = () => {
       const response = await transactionService.initiatePayment(paymentData);
       // Redirect to Paystack authorization URL
       window.location.href = response.authorization_url;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);

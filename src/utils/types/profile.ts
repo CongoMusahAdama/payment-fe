@@ -1,6 +1,7 @@
 export type ProfileTypes = {
-  fullname: string;
+  Fullname: string;
   email: string;
   phone: string;
   address: string;
+  id?: string;
 };

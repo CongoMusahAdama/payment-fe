@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import profileService from "../../services/profileService";
-import { ProfileTypes } from "../../types/profile";
+import { ProfileTypes } from "../../utils/types/profile";
 
 const Profile = () => {
   const [profile, setProfile] = useState<ProfileTypes>({
-    fullname: "",
+    Fullname: "",
     email: "",
     phone: "",
     address: "",
@@ -16,7 +16,7 @@ const Profile = () => {
       try {
         const data = await profileService.getProfile();
         setProfile(data);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };
@@ -28,7 +28,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       await profileService.updateProfile(profile);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };
@@ -51,7 +51,7 @@ const Profile = () => {
           type="text"
           name="fullname"
           placeholder="Full Name"
-          value={profile.fullname}
+          value={profile.Fullname}
           onChange={handleChange}
           required
           className="border p-2 mb-2 w-full"
