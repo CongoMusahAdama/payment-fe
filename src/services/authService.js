@@ -3,6 +3,8 @@ import axios from 'axios';
 const API_URL = 'https://payment-be-3tc2.onrender.com/api/auth/';
 
 
+
+
 const register = async (userData) => {
     console.log("Registering user with data:", userData);
 
