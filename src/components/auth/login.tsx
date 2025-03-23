@@ -11,6 +11,7 @@ import authService from "@/services/authService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { saveAuthTokens } from "@/utils/constant";
+import { useAuth } from "@/context/auth.context";
 
 type LoginProps = {
   setAuthType: Dispatch<SetStateAction<"login" | "register">>;
@@ -29,6 +30,7 @@ type FormValues = Pick<ProfileTypes, "email"> & {
 };
 
 export function LoginForm({ className, setAuthType, ...props }: React.ComponentPropsWithoutRef<"div"> & LoginProps) {
+  const { setIsAuthenticated } = useAuth();
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -42,7 +44,7 @@ export function LoginForm({ className, setAuthType, ...props }: React.ComponentP
       console.log(res);
       saveAuthTokens(res);
       navigate("/dashboard");
-
+      setIsAuthenticated(true);
       toast("Login successful");
     } catch (error) {
       toast.error("An error occurred. Please try again.");
