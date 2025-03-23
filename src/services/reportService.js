@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/reports/';
+const API_URL = 'https://payment-be-3tc2.onrender.com/api/reports/';
 
 const downloadTransactionReport = async (format, filters) => {
     const response = await axios.get(`${API_URL}download`, {

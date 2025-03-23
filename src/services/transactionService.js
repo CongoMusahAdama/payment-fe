@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/transactions/';
+const API_URL = 'https://payment-be-3tc2.onrender.com/api/transactions/';
 
 const depositFunds = async (depositData) => {
     const response = await axios.post(`${API_URL}deposit`, depositData);

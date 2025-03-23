@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/payments/';
+const API_URL = 'https://payment-be-3tc2.onrender.com/api/payments/';
 
 const initiatePayment = async (paymentData) => {
     const response = await axios.post(`${API_URL}initiate`, paymentData);
