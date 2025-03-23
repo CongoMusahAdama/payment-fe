@@ -1,5 +1,5 @@
 export type TransactionHistoryTypes = {
-  id: string;
+  _id: string;
   amount: number;
   date: string;
   status: string;

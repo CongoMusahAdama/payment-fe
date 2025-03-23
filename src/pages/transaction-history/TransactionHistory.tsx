@@ -10,6 +10,8 @@ const TransactionHistory = () => {
     const fetchTransactions = async () => {
       try {
         const data = await transactionService.getTransactionHistory();
+        console.log(data);
+
         setTransactions(data.transactions);
       } catch (err: any) {
         setError(err.message);

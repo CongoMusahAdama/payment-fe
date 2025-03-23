@@ -16,6 +16,7 @@ import { ProfileTypes } from "@/utils/types/profile";
 import { useAuth } from "@/context/auth.context";
 import { SkeletonCard } from "@/components/loading-skeleton";
 import profileService from "@/services/profileService";
+import TransactionHistory from "@/components/dashboard/transaction-history";
 
 type TabType = "profile" | "transactions" | "send";
 
@@ -259,22 +260,7 @@ export default function UserDashboard() {
             </TabsContent>
 
             <TabsContent value="transactions" className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Transaction History</h2>
-              <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="bg-gray-700 p-4 rounded-lg flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{i % 2 === 0 ? "Payment Sent" : "Payment Received"}</p>
-                      <p className="text-sm text-gray-400">
-                        {new Date(Date.now() - i * 86400000).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className={`font-bold ${i % 2 === 0 ? "text-red-400" : "text-green-400"}`}>
-                      {i % 2 === 0 ? "-" : "+"}${(Math.random() * 1000).toFixed(2)}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <TransactionHistory />
             </TabsContent>
 
             <TabsContent value="send" className="p-6">
