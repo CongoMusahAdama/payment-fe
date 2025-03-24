@@ -1,7 +1,7 @@
 export type TransactionHistoryTypes = {
   _id: string;
   amount: number;
-  createAt: string;
+  createdAt: string;
   status: "completed" | string;
   reference: string;
   transactionType: "deposit" | "transfer" | "withdrawal";

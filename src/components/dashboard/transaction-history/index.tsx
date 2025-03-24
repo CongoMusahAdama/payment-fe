@@ -75,7 +75,7 @@ const TransactionHistory = (props: Props) => {
             <div key={i} className="bg-gray-700 p-4 rounded-lg flex justify-between items-center">
               <div>
                 <p className="font-medium capitalize">{transaction.transactionType}</p>
-                <p className="text-sm text-gray-400">{new Date(transaction.createAt).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-400">{new Date(transaction.createdAt).toLocaleDateString()}</p>
                 <p className="font-bold">GHS{transaction.amount}</p>
               </div>
               <div
