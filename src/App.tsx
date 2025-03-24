@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Auth from "./pages/auth/Auth";
 import Profile from "./pages/dashboard/Dashboard";
 import Transfer from "./pages/transfer/Transfer";
-import TransactionHistory from "./pages/transaction-history/TransactionHistory";
 import MfaVerification from "./pages/auth/mfa";
 import ProtectedRoute from "./components/protected";
+import PaymentSuccess from "./pages/payment-successful";
 
 const App = () => {
   return (
@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/verify" element={<MfaVerification />} />
         <Route path="/dashboard" element={<ProtectedRoute children={<Profile />} />} />
         <Route path="/transfer" element={<Transfer />} />
-        <Route path="/transactions" element={<TransactionHistory />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
       </Routes>
     </Router>
   );

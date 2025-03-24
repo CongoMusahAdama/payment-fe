@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreditCard, History, LogOut, Save, User, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,9 @@ import { useAuth } from "@/context/auth.context";
 import { SkeletonCard } from "@/components/loading-skeleton";
 import profileService from "@/services/profileService";
 import TransactionHistory from "@/components/dashboard/transaction-history";
+import SendFunds from "@/components/dashboard/send";
+import DepositFunds from "@/components/dashboard/deposit";
+import transactionService from "@/services/transactionService";
 
 type TabType = "profile" | "transactions" | "send";
 
@@ -25,6 +28,8 @@ export default function UserDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
 
   const { profile, isLoadingProfile, setIsAuthenticated, setProfile } = useAuth();
   console.log("profile", profile);
@@ -98,6 +103,23 @@ export default function UserDashboard() {
     }));
   };
 
+  const getBalance = async () => {
+    setIsLoadingBalance(true);
+    try {
+      const token = getAccessToken();
+      const res = (await transactionService.getBalance(token)) as { balance: number };
+      setBalance(res.balance);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingBalance(false);
+    }
+  };
+
+  useEffect(() => {
+    getBalance();
+  }, []);
+
   const logOut = async () => {
     setIsLoggingOut(true);
     try {
@@ -116,6 +138,9 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-gray-100 p-4">
       <div className="container mx-auto max-w-4xl">
+        <h1 className="mt-8 mb-2 text-sm">
+          Balance: <span className="font-bold">GHS{isLoadingBalance ? "Loading..." : balance || 0}</span>
+        </h1>
         <div className="bg-gray-800 rounded-xl shadow-xl overflow-hidden">
           <Tabs defaultValue="profile" value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="border-b border-gray-700">
@@ -140,6 +165,13 @@ export default function UserDashboard() {
                 >
                   <CreditCard className="mr-2 h-5 w-5" />
                   Send Funds
+                </TabsTrigger>
+                <TabsTrigger
+                  value="deposit"
+                  className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                >
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Deposit Funds
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -264,46 +296,10 @@ export default function UserDashboard() {
             </TabsContent>
 
             <TabsContent value="send" className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Send Funds</h2>
-              <div className="max-w-md mx-auto space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="recipient" className="text-gray-300">
-                    Recipient
-                  </Label>
-                  <Input
-                    id="recipient"
-                    placeholder="Email or username"
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-gray-300">
-                    Amount
-                  </Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-400">$</span>
-                    </div>
-                    <Input
-                      id="amount"
-                      type="number"
-                      placeholder="0.00"
-                      className="bg-gray-700 border-gray-600 text-white pl-8"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="note" className="text-gray-300">
-                    Note (Optional)
-                  </Label>
-                  <Textarea
-                    id="note"
-                    placeholder="Add a message..."
-                    className="bg-gray-700 border-gray-600 text-white min-h-[80px]"
-                  />
-                </div>
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Send Payment</Button>
-              </div>
+              <SendFunds />
+            </TabsContent>
+            <TabsContent value="deposit" className="p-6">
+              <DepositFunds />
             </TabsContent>
           </Tabs>
         </div>

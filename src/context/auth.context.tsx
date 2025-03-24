@@ -53,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         moneyRequests: data.user.moneyRequests,
         payments: data.user.payments,
         transactions: data.user.transactions,
+        _id: data.user._id,
       } as ProfileTypes);
       setIsAuthenticated(true);
     } catch (error) {

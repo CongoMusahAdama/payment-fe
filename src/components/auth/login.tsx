@@ -41,7 +41,6 @@ export function LoginForm({ className, setAuthType, ...props }: React.ComponentP
   const onSubmit = async (data: FormValues) => {
     try {
       const res = (await authService.login(data)) as TokenResponse;
-      console.log(res);
       saveAuthTokens(res);
       navigate("/dashboard");
       setIsAuthenticated(true);

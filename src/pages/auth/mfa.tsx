@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/authService";
+import { toast } from "sonner";
 
 export default function MfaVerification() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -19,7 +20,6 @@ export default function MfaVerification() {
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;
-  console.log(email);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -105,6 +105,7 @@ export default function MfaVerification() {
 
     try {
       await authService.mfaVerify(email, otpString);
+      toast.success("Verification successful");
       // Successfully verified
       navigate("/"); // Redirect to login page
     } catch (err) {
