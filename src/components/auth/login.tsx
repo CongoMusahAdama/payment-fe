@@ -45,8 +45,8 @@ export function LoginForm({ className, setAuthType, ...props }: React.ComponentP
       navigate("/dashboard");
       setIsAuthenticated(true);
       toast("Login successful");
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
+    } catch (error: any) {
+      toast.error(error.response.data.message || "An error occurred. Please try again.");
     }
   };
 

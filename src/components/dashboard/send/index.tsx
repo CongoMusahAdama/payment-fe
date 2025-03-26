@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/auth.context";
 import transactionService from "@/services/transactionService";
 import { getAccessToken } from "@/utils/constant";
@@ -31,8 +30,10 @@ const SendFunds = (props: Props) => {
     try {
       await transactionService.transferMoney(data, token);
       toast.success("Payment sent successfully!");
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
+      setAmount(0);
+      setRecipient("");
+    } catch (error: any) {
+      toast.error(error.response.data.message || "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }

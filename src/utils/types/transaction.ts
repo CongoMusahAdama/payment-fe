@@ -26,3 +26,16 @@ export type PaymentDetailsTypes = {
   reference: string;
   status: string;
 };
+
+export type WithdrawFundsTypes = {
+  amount: number;
+  id: string;
+  // otp: string;
+};
+
+export type RequestFundsTypes = {
+  amount: number;
+  recipientId: string;
+  requesterId: string;
+  note: string;
+};

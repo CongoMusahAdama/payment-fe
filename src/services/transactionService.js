@@ -13,11 +13,6 @@ const depositFunds = async (depositData, token) => {
   return response.data;
 };
 
-const requestMoney = async (requestData) => {
-  const response = await axios.post(`${API_URL}request-money`, requestData);
-  return response.data;
-};
-
 const getTransactionHistory = async (token, filters) => {
   const response = await axios.get(`${API_URL}/transactions/history`, {
     params: filters,
@@ -51,6 +46,15 @@ const verifyDeposit = async (reference, token) => {
     params: {
       reference,
     },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+const requestMoney = async (token, requestData) => {
+  const response = await axios.post(`${API_URL}/transactions/request-money`, requestData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

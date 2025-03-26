@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     moneyRequests: [],
     payments: [],
     transactions: [],
+    recipientCode: "",
   });
   console.log("profile", profile);
 
@@ -45,6 +46,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       })) as { data: UserResponse };
+      console.log("data", data.user);
+
       setProfile({
         Fullname: data.user.Fullname,
         email: data.user.email,
@@ -54,6 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         payments: data.user.payments,
         transactions: data.user.transactions,
         _id: data.user._id,
+        recipientCode: data.user.recipientCode,
       } as ProfileTypes);
       setIsAuthenticated(true);
     } catch (error) {

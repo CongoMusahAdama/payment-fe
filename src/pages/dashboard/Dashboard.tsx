@@ -20,6 +20,8 @@ import TransactionHistory from "@/components/dashboard/transaction-history";
 import SendFunds from "@/components/dashboard/send";
 import DepositFunds from "@/components/dashboard/deposit";
 import transactionService from "@/services/transactionService";
+import { WithdrawFundsModal } from "@/components/dashboard/modals/withdraw-funds";
+import { RequestFundsModal } from "@/components/dashboard/modals/request-funds";
 
 type TabType = "profile" | "transactions" | "send";
 
@@ -30,9 +32,10 @@ export default function UserDashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
+  const [isOpenWithdrawFunds, setIsOpenWithdrawFunds] = useState(false);
+  const [isOpenRequestMoney, setIsOpenRequestMoney] = useState(false);
 
   const { profile, isLoadingProfile, setIsAuthenticated, setProfile } = useAuth();
-  console.log("profile", profile);
 
   const [editedProfile, setEditedProfile] = useState<ProfileTypes>({
     Fullname: profile?.Fullname || "",
@@ -45,6 +48,7 @@ export default function UserDashboard() {
     moneyRequests: profile?.moneyRequests || [],
     payments: profile?.payments || [],
     transactions: profile?.transactions || [],
+    recipientCode: profile?.recipientCode || "",
   });
 
   const navigate = useNavigate();
@@ -136,174 +140,192 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-gray-100 p-4">
-      <div className="container mx-auto max-w-4xl">
-        <h1 className="mt-8 mb-2 text-sm">
-          Balance: <span className="font-bold">GHS{isLoadingBalance ? "Loading..." : balance || 0}</span>
-        </h1>
-        <div className="bg-gray-800 rounded-xl shadow-xl overflow-hidden">
-          <Tabs defaultValue="profile" value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <div className="border-b border-gray-700">
-              <TabsList className="bg-gray-800 p-0 h-16 w-full flex justify-around">
-                <TabsTrigger
-                  value="profile"
-                  className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
-                >
-                  <User className="mr-2 h-5 w-5" />
-                  Profile
-                </TabsTrigger>
-                <TabsTrigger
-                  value="transactions"
-                  className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
-                >
-                  <History className="mr-2 h-5 w-5" />
-                  Transaction History
-                </TabsTrigger>
-                <TabsTrigger
-                  value="send"
-                  className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
-                >
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Send Funds
-                </TabsTrigger>
-                <TabsTrigger
-                  value="deposit"
-                  className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
-                >
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Deposit Funds
-                </TabsTrigger>
-              </TabsList>
+    <>
+      <WithdrawFundsModal isOpen={isOpenWithdrawFunds} setIsOpen={setIsOpenWithdrawFunds} />
+      <RequestFundsModal isOpen={isOpenRequestMoney} setIsOpen={setIsOpenRequestMoney} />
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-gray-100 p-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex justify-between items-center">
+            <h1 className="mt-8 mb-2 text-sm">
+              Balance: <span className="font-bold">GHS{isLoadingBalance ? "Loading..." : balance || 0}</span>
+            </h1>
+            <div className="flex gap-2">
+              <Button variant={"secondary"} className="cursor-pointer" onClick={() => setIsOpenWithdrawFunds(true)}>
+                Withdraw Funds
+              </Button>
+              <Button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
+                onClick={() => setIsOpenRequestMoney(true)}
+              >
+                Request Money
+              </Button>
             </div>
+          </div>
+          <div className="bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+            <Tabs defaultValue="profile" value={activeTab} onValueChange={handleTabChange} className="w-full">
+              <div className="border-b border-gray-700 overflow-auto">
+                <TabsList className="bg-gray-800 p-0 h-16 w-full flex justify-around">
+                  <TabsTrigger
+                    value="profile"
+                    className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                  >
+                    <User className="mr-2 h-5 w-5" />
+                    Profile
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="transactions"
+                    className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                  >
+                    <History className="mr-2 h-5 w-5" />
+                    Transaction History
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="send"
+                    className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                  >
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Send Funds
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="deposit"
+                    className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                  >
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Deposit Funds
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-            <TabsContent value="profile" className="p-6">
-              {isLoadingProfile ? (
-                <SkeletonCard />
-              ) : (
-                <div className="flex flex-col md:flex-row gap-8">
-                  <div className="flex flex-col items-center space-y-4">
-                    {!isEditing ? (
-                      <Button
-                        onClick={handleEdit}
-                        variant="outline"
-                        className="text-indigo-400 border-indigo-400 hover:bg-indigo-400/10 hover:text-white cursor-pointer"
-                      >
-                        Edit Profile
-                      </Button>
-                    ) : (
-                      <div className="flex space-x-2">
+              <TabsContent value="profile" className="p-6">
+                {isLoadingProfile ? (
+                  <SkeletonCard />
+                ) : (
+                  <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex flex-col items-center space-y-4">
+                      {!isEditing ? (
                         <Button
-                          onClick={handleSave}
-                          disabled={isSaving}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                        >
-                          <Save className="mr-2 h-4 w-4 cursor-pointer" />
-                          {isSaving ? "Saving..." : "Save"}
-                        </Button>
-                        <Button
-                          onClick={handleCancel}
+                          onClick={handleEdit}
                           variant="outline"
-                          className="text-gray-400 border-gray-600 hover:bg-gray-700 cursor-pointer"
+                          className="text-indigo-400 border-indigo-400 hover:bg-indigo-400/10 hover:text-white cursor-pointer"
                         >
-                          <X className="mr-2 h-4 w-4" />
-                          Cancel
+                          Edit Profile
                         </Button>
-                      </div>
-                    )}
-                    <Button variant={"secondary"} onClick={logOut} size={"lg"} className="cursor-pointer">
-                      <LogOut />
-                      {isLoggingOut ? "Logging out..." : "Logout"}
-                    </Button>
-                  </div>
+                      ) : (
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                          >
+                            <Save className="mr-2 h-4 w-4 cursor-pointer" />
+                            {isSaving ? "Saving..." : "Save"}
+                          </Button>
+                          <Button
+                            onClick={handleCancel}
+                            variant="outline"
+                            className="text-gray-400 border-gray-600 hover:bg-gray-700 cursor-pointer"
+                          >
+                            <X className="mr-2 h-4 w-4" />
+                            Cancel
+                          </Button>
+                        </div>
+                      )}
+                      <Button variant={"secondary"} onClick={logOut} size={"lg"} className="cursor-pointer">
+                        <LogOut />
+                        {isLoggingOut ? "Logging out..." : "Logout"}
+                      </Button>
+                    </div>
 
-                  <div className="flex-1 space-y-6">
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name" className="text-gray-300">
-                            Full Name
-                          </Label>
-                          <Input
-                            id="name"
-                            required
-                            value={isEditing ? editedProfile.Fullname : profile.Fullname}
-                            onChange={(e) => handleProfileChange("Fullname", e.target.value)}
-                            disabled={!isEditing}
-                            className={`bg-gray-700 border-gray-600 text-white ${
-                              isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
-                            }`}
-                          />
+                    <div className="flex-1 space-y-6">
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name" className="text-gray-300">
+                              Full Name
+                            </Label>
+                            <Input
+                              id="name"
+                              required
+                              value={isEditing ? editedProfile.Fullname : profile.Fullname}
+                              onChange={(e) => handleProfileChange("Fullname", e.target.value)}
+                              disabled={!isEditing}
+                              className={`bg-gray-700 border-gray-600 text-white ${
+                                isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
+                              }`}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="email" className="text-gray-300">
+                              Email Address
+                            </Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              required
+                              value={isEditing ? editedProfile.email : profile.email}
+                              onChange={(e) => handleProfileChange("email", e.target.value)}
+                              disabled={!isEditing}
+                              className={`bg-gray-700 border-gray-600 text-white ${
+                                isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
+                              }`}
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="text-gray-300">
-                            Email Address
-                          </Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            required
-                            value={isEditing ? editedProfile.email : profile.email}
-                            onChange={(e) => handleProfileChange("email", e.target.value)}
-                            disabled={!isEditing}
-                            className={`bg-gray-700 border-gray-600 text-white ${
-                              isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
-                            }`}
-                          />
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-gray-300">
-                            Phone Number
-                          </Label>
-                          <Input
-                            id="phone"
-                            type="number"
-                            required
-                            value={isEditing ? editedProfile.phone : profile.phone}
-                            onChange={(e) => handleProfileChange("phone", e.target.value)}
-                            disabled={!isEditing}
-                            className={`bg-gray-700 border-gray-600 text-white ${
-                              isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
-                            }`}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="address" className="text-gray-300">
-                            Address
-                          </Label>
-                          <Input
-                            id="address"
-                            required
-                            value={isEditing ? editedProfile.address : profile.address}
-                            onChange={(e) => handleProfileChange("address", e.target.value)}
-                            disabled={!isEditing}
-                            className={`bg-gray-700 border-gray-600 text-white ${
-                              isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
-                            }`}
-                          />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-gray-300">
+                              Phone Number
+                            </Label>
+                            <Input
+                              id="phone"
+                              type="number"
+                              required
+                              value={isEditing ? editedProfile.phone : profile.phone}
+                              onChange={(e) => handleProfileChange("phone", e.target.value)}
+                              disabled={!isEditing}
+                              className={`bg-gray-700 border-gray-600 text-white ${
+                                isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
+                              }`}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="address" className="text-gray-300">
+                              Address
+                            </Label>
+                            <Input
+                              id="address"
+                              required
+                              value={isEditing ? editedProfile.address : profile.address}
+                              onChange={(e) => handleProfileChange("address", e.target.value)}
+                              disabled={!isEditing}
+                              className={`bg-gray-700 border-gray-600 text-white ${
+                                isEditing ? "border-indigo-500 focus:border-indigo-400" : ""
+                              }`}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </TabsContent>
+                )}
+              </TabsContent>
 
-            <TabsContent value="transactions" className="p-6">
-              <TransactionHistory />
-            </TabsContent>
+              <TabsContent value="transactions" className="p-6">
+                <TransactionHistory />
+              </TabsContent>
 
-            <TabsContent value="send" className="p-6">
-              <SendFunds />
-            </TabsContent>
-            <TabsContent value="deposit" className="p-6">
-              <DepositFunds />
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="send" className="p-6">
+                <SendFunds />
+              </TabsContent>
+              <TabsContent value="deposit" className="p-6">
+                <DepositFunds />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

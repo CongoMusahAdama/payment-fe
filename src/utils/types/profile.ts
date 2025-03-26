@@ -10,6 +10,7 @@ export type ProfileTypes = {
   moneyRequests: MoneyRequest[];
   payments: Payment[];
   transactions: Transaction[];
+  recipientCode: string | null;
 };
 
 export type MoneyRequest = {

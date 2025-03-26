@@ -29,13 +29,12 @@ const Signup = ({ className, setAuthType, ...props }: React.ComponentPropsWithou
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await authService.register(data);
+      await authService.register(data);
       await authService.mfaSetup(data.email);
-      console.log(res);
       navigate("/verify", { state: { email: data.email } });
       toast("Account created successfully");
-    } catch (error) {
-      toast("An error occurred. Please try again.");
+    } catch (error: any) {
+      toast.error(error.response.data.message || "An error occurred. Please try again.");
     }
   };
 
