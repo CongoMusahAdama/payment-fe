@@ -1,7 +1,7 @@
 import type React from "react";
 
 import { useEffect, useState } from "react";
-import { CreditCard, History, LogOut, Save, User, X } from "lucide-react";
+import { BoomBox, CreditCard, History, LogOut, Save, User, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +21,7 @@ import transactionService from "@/services/transactionService";
 import { WithdrawFundsModal } from "@/components/dashboard/modals/withdraw-funds";
 import { RequestFundsModal } from "@/components/dashboard/modals/request-funds";
 import Profile from "@/components/dashboard/profile";
+import MoneyRequestList from "@/components/dashboard/money-request";
 
 type TabType = "profile" | "transactions" | "send";
 
@@ -129,6 +130,13 @@ export default function UserDashboard() {
                     <CreditCard className="mr-2 h-5 w-5" />
                     Deposit Funds
                   </TabsTrigger>
+                  <TabsTrigger
+                    value="request"
+                    className="data-[state=active]:bg-gray-700 text-gray-400 data-[state=active]:text-white rounded-none cursor-pointer flex-1 h-full"
+                  >
+                    <BoomBox className="mr-2 h-5 w-5" />
+                    Money Requests
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
@@ -150,6 +158,9 @@ export default function UserDashboard() {
               </TabsContent>
               <TabsContent value="deposit" className="p-6">
                 <DepositFunds />
+              </TabsContent>
+              <TabsContent value="request" className="p-6">
+                <MoneyRequestList />
               </TabsContent>
             </Tabs>
           </div>

@@ -38,4 +38,5 @@ export type RequestFundsTypes = {
   recipientId: string;
   requesterId: string;
   note: string;
+  status: "pending" | "completed" | "declined";
 };
