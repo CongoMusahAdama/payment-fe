@@ -62,6 +62,15 @@ const requestMoney = async (token, requestData) => {
   return response.data;
 };
 
+const moneyRequests = async (token) => {
+  const response = await axios.get(`${API_URL}/transactions/requests`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 const transactionService = {
   depositFunds,
   requestMoney,
@@ -69,6 +78,7 @@ const transactionService = {
   transferMoney,
   getBalance,
   verifyDeposit,
+  moneyRequests,
 };
 
 export default transactionService;

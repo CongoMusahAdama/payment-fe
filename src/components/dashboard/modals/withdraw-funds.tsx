@@ -14,6 +14,7 @@ import { getAccessToken } from "@/utils/constant";
 import { useState } from "react";
 import paymentService from "@/services/paymentService";
 import { toast } from "sonner";
+import ConfirmWithdrawalOtp from "../confirm-withdrawal-otp";
 
 type Props = {
   isOpen: boolean;
@@ -23,8 +24,7 @@ type Props = {
 export function WithdrawFundsModal({ isOpen, setIsOpen }: Props) {
   const [amount, setAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { profile } = useAuth();
+  const [isOtpSent, setIsOtpSent] = useState(false);
 
   const handleWithdrawFunds = async () => {
     if (!amount || amount === 0) {
@@ -32,12 +32,12 @@ export function WithdrawFundsModal({ isOpen, setIsOpen }: Props) {
       return;
     }
     setIsLoading(true);
+    setIsOtpSent(false);
     const token = getAccessToken();
     try {
-      await paymentService.initiateWithdrawal(token, profile.recipientCode, amount);
+      await paymentService.requestWithdrawal(token, amount);
+      setIsOtpSent(true);
       toast.success("Withdrawal initiated successfully");
-      setIsOpen(false);
-      setAmount(0);
     } catch (error: any) {
       toast.error(error.response.data.message || "An error occurred. Please try again.");
     } finally {
@@ -47,31 +47,46 @@ export function WithdrawFundsModal({ isOpen, setIsOpen }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Withdraw Funds</DialogTitle>
-          <DialogDescription>Enter the amount you want to withdraw</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Amount
-            </Label>
-            <Input
-              id="name"
-              type="number"
-              onChange={(e) => setAmount(+e.target.value)}
-              value={amount}
-              className="col-span-3"
-            />
+      {isOtpSent ? (
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Withdrawal</DialogTitle>
+            <DialogDescription>An OTP has been sent to you, please Enter it</DialogDescription>
+          </DialogHeader>
+          <ConfirmWithdrawalOtp
+            onCancel={() => setIsOpen(false)}
+            setIsOtpSent={setIsOtpSent}
+            amount={amount}
+            setAmount={setAmount}
+          />
+        </DialogContent>
+      ) : (
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Withdraw Funds</DialogTitle>
+            <DialogDescription>Enter the amount you want to withdraw</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Amount
+              </Label>
+              <Input
+                id="name"
+                type="number"
+                onChange={(e) => setAmount(+e.target.value)}
+                value={amount}
+                className="col-span-3"
+              />
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit" disabled={isLoading} onClick={handleWithdrawFunds}>
-            {isLoading ? "Please waiting..." : "Confirm"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+          <DialogFooter>
+            <Button type="submit" disabled={isLoading} className="cursor-pointer" onClick={handleWithdrawFunds}>
+              {isLoading ? "Please waiting..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      )}
     </Dialog>
   );
 }

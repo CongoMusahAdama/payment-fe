@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from "react";
-import transactionService from "../../services/transactionService";
+import paymentService from "@/services/paymentService";
 
 const PAYSTACK_PUBLIC_KEY = "pk_test_54d0afa0a28d96055f4f4b26e05d11e4877f14e5";
 
@@ -18,7 +18,7 @@ const Transfer = () => {
         amount: Number(amount) * 100, // Convert to kobo
         publicKey: PAYSTACK_PUBLIC_KEY,
       };
-      const response = await transactionService.initiatePayment(paymentData);
+      const response = await paymentService.initiatePayment(paymentData);
       // Redirect to Paystack authorization URL
       window.location.href = response.authorization_url;
     } catch (err: any) {
