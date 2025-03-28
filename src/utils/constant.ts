@@ -1,7 +1,8 @@
 import { clear } from "console";
 import { TokenResponse } from "./types/profile";
 
-const useLocalHost = true;
+const useLocalHost = false;
+
 export const URL = useLocalHost ? "http://localhost:5000/api" : "https://payment-be-3tc2.onrender.com/api";
 
 export const saveAuthTokens = (tokens: TokenResponse) => {
