@@ -1,4 +1,4 @@
-# Payment Frontend Application
+ # Payment Frontend Application
 
 This is a frontend payment application built with React and Vite.
 
@@ -79,7 +79,43 @@ payment-fe/
 └── README.md         # This file
 ```
 
-## Available Scripts
+## Usage Instructions
+
+After deploying the application, you can access it in your web browser at the following URL:
+[Live Netlify URL](https://67e65fa0167728d915b7736c--kaleidoscopic-entremet-145d98.netlify.app)
+
+### Key Features
+- **User Authentication**: Users can sign up and log in to their accounts.
+- **Transaction Management**: Users can view and manage their transactions.
+- **Dashboard**: A user-friendly dashboard to navigate through the application.
+
+To use the application, simply navigate to the URL above and follow the on-screen instructions to interact with the various features.
+
+
+This application can be deployed on Netlify. Follow the steps below to deploy your application:
+
+1. **Build the Application**: First, ensure that your application is built for production by running:
+   ```bash
+   npm run build
+   # or with yarn
+   yarn build
+   ```
+
+2. **Login to Netlify**: Go to [Netlify](https://app.netlify.com/login) and log in or sign up for an account.
+
+3. **Create a New Site**: Click on "New site from Git" and connect your GitHub repository.
+
+4. **Configure Build Settings**:
+   - **Branch to deploy**: `main` (or your default branch)
+   - **Build command**: `npm run build` (or `yarn build`)
+   - **Publish directory**: `dist`
+
+5. **Deploy Site**: Click on "Deploy site" and wait for the process to complete.
+
+6. **Access Your Live Site**: Once deployed, you can access your live site at the following URL:
+   [Live Netlify URL](https://67e65fa0167728d915b7736c--kaleidoscopic-entremet-145d98.netlify.app)
+
+
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
