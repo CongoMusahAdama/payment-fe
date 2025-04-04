@@ -46,7 +46,13 @@ export function LoginForm({ className, setAuthType, ...props }: React.ComponentP
       setIsAuthenticated(true);
       toast("Login successful");
     } catch (error: any) {
-      toast.error(error.response.data.message || "An error occurred. Please try again.");
+      let errorMessage = "An error occurred. Please try again.";
+      if (error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error.request) {
+        errorMessage = "Network error - could not reach the server";
+      }
+      toast.error(errorMessage);
     }
   };
 

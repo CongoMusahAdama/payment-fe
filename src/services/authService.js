@@ -1,7 +1,7 @@
-import { getAccessToken, URL } from "@/utils/constant";
+import { getAccessToken, URL } from "../utils/constant";
 import axios from "axios";
 
-// const API_URL = 'http://localhost:5000/api/auth/';
+//const API_URL = 'http://localhost:5000/api/auth/';
 const API_URL = `${URL}/auth/`;
 
 const register = async (userData) => {
