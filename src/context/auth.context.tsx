@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 const API_URL = `${URL}/users/profile`;
 
+
 interface AuthContextType {
   isAuthenticated: boolean;
   profile: ProfileTypes;
