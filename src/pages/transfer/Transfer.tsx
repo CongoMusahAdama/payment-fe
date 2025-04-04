@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import paymentService from "@/services/paymentService";
 
-const PAYSTACK_PUBLIC_KEY = "pk_test_54d0afa0a28d96055f4f4b26e05d11e4877f14e5";
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
 
 const Transfer = () => {
   const [recipientId, setRecipientId] = useState("");
