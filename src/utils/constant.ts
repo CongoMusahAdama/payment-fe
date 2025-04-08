@@ -1,9 +1,13 @@
 import { clear } from "console";
 import { TokenResponse } from "./types/profile";
 
-const useLocalHost = true;
+const isLocalHost = window.location.hostname === "localhost";
 
-export const URL = useLocalHost ? "http://localhost:5000/api" : "https://payment-be-3tc2.onrender.com/api";
+
+
+//const useLocalHost = true;
+
+export const URL = isLocalHost ? "http://localhost:5000/api" : "https://payment-be-3tc2.onrender.com/api";
 
 
 export const saveAuthTokens = (tokens: TokenResponse) => {
@@ -18,3 +22,4 @@ export const clearAuthTokens = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
 };
+
