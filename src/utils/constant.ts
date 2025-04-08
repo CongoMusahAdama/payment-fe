@@ -1,7 +1,7 @@
 import { clear } from "console";
 import { TokenResponse } from "./types/profile";
 
-const isLocalHost = true;
+const isLocalHost = window.location.hostname === "localhost" == false; 
 
 
 
