@@ -7,7 +7,7 @@ const isLocalHost = true;
 
 //const useLocalHost = true;
 
-export const URL = isLocalHost ? "http://localhost:5000" : "https://payment-be-3tc2.onrender.com/api";
+export const URL = isLocalHost ? "http://localhost:5000/api" : "https://payment-be-3tc2.onrender.com";
 
 
 export const saveAuthTokens = (tokens: TokenResponse) => {
