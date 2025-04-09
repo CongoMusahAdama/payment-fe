@@ -41,7 +41,7 @@ const verifyWithdrawal = async (token, otp, amount) => {
 };
 
 const initiateDeposit = async (paymentData) => {
-  const response = await axios.post(`${API_URL}deposit`, paymentData);
+  const response = await axios.post(`${API_URL}payments/deposit`, paymentData);
   return response.data;
 };
 
