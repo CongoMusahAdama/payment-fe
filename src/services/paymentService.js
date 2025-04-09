@@ -1,11 +1,14 @@
-import { URL } from "@/utils/constant";
+import { URL } from "../utils/constant";
 import axios from "axios";
 
-// const API_URL = "http://localhost:5000/api/payments/";
 const API_URL = `${URL}/payments/`;
 
-const initiatePayment = async (paymentData) => {
-  const response = await axios.post(`${API_URL}initiate`, paymentData);
+const initiatePayment = async (paymentData, token) => {
+  const response = await axios.post(`${API_URL}initiate`, paymentData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
@@ -40,8 +43,12 @@ const verifyWithdrawal = async (token, otp, amount) => {
   return response.data;
 };
 
-const initiateDeposit = async (paymentData) => {
-  const response = await axios.post(`${API_URL}deposit`, paymentData);
+const initiateDeposit = async (paymentData, token) => {
+  const response = await axios.post(`${API_URL}deposit`, paymentData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
