@@ -44,12 +44,18 @@ const verifyWithdrawal = async (token, otp, amount) => {
 };
 
 const initiateDeposit = async (paymentData, token) => {
-  const response = await axios.post(`${API_URL}deposit`, paymentData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}deposit`, paymentData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Deposit failed:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Deposit processing failed');
+  }
 };
 
 const paymentService = {
